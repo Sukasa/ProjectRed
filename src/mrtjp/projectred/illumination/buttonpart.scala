@@ -115,7 +115,7 @@ class LightButtonPart(meta:Int) extends ButtonPart(meta) with ILight
     @SideOnly(Side.CLIENT)
     override def renderDynamic(pos:Vector3, frame:Float, pass:Int)
     {
-        if (pass == 0 && (isOn || powered))
+        if (pass == 0 && ((pressed || powered) != inverted))
         {
             val box = getBounds.expand(0.025D)
             RenderHalo.addLight(x, y, z, colorMeta, box)
