@@ -41,6 +41,21 @@ class LightButtonPart(meta:Int) extends ButtonPart(meta) with ILight
         else true
     }
 
+    var powered = false
+    
+    def checkPower =
+    {
+        worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord) ||
+            worldObj.getBlockPowerInput(xCoord, yCoord, zCoord) != 0
+    }
+
+    override def onScheduledTick()
+    {
+        val old = powered
+        powered = checkPower
+        if (old != powered) markDescUpdate()
+    }
+
     override def isOn = pressed != inverted
 
     override def getColor = colorMeta
@@ -100,7 +115,7 @@ class LightButtonPart(meta:Int) extends ButtonPart(meta) with ILight
     @SideOnly(Side.CLIENT)
     override def renderDynamic(pos:Vector3, frame:Float, pass:Int)
     {
-        if (pass == 0 && isOn)
+        if (pass == 0 && (isOn || powered))
         {
             val box = getBounds.expand(0.025D)
             RenderHalo.addLight(x, y, z, colorMeta, box)
